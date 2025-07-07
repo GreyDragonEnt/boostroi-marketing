@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoostROI Agency - Aussie Marketing That Actually Works</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Arial', sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .hero { background: linear-gradient(135deg, #FF5B2E 0%, #E6471A 100%); color: white; padding: 100px 0; text-align: center; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="3" fill="white" opacity="0.08"/><circle cx="50" cy="10" r="1.5" fill="white" opacity="0.12"/></svg>'); }
+        .hero-content { position: relative; z-index: 2; }
+        .hero h1 { font-size: 3.5em; margin-bottom: 25px; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .hero .subtitle { font-size: 1.4em; margin-bottom: 35px; max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.95; }
+        .cta-button { display: inline-block; background: white; color: #FF5B2E; padding: 18px 35px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1em; margin: 12px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,0,0,0.3); }
+        .cta-secondary { background: transparent; border: 3px solid white; color: white; }
+        .cta-secondary:hover { background: white; color: #FF5B2E; }
+        .section { padding: 80px 0; }
+        .features { background: linear-gradient(to bottom, #f8f9fa, #ffffff); }
+        .section-title { font-size: 3em; text-align: center; margin-bottom: 60px; color: #1F2937; font-weight: 700; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; margin-top: 50px; }
+        .feature-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s ease; border: 1px solid #f0f0f0; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .feature-card h3 { color: #FF5B2E; margin-bottom: 20px; font-size: 1.6em; font-weight: 600; }
+        .feature-card p { font-size: 1.1em; line-height: 1.7; color: #555; }
+        .stats-section { background: #1F2937; color: white; padding: 60px 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; text-align: center; }
+        .stat-item { padding: 20px; }
+        .stat-number { font-size: 3.5em; font-weight: 800; color: #FF5B2E; margin-bottom: 10px; }
+        .stat-label { font-size: 1.1em; opacity: 0.9; }
+        .pricing { background: linear-gradient(to bottom, #ffffff, #f8f9fa); text-align: center; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; margin-top: 50px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+        .pricing-card { background: white; border: 3px solid #e5e7eb; padding: 50px 30px; border-radius: 20px; position: relative; transition: all 0.3s ease; }
+        .pricing-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .pricing-card.featured { border-color: #FF5B2E; transform: scale(1.08); box-shadow: 0 15px 35px rgba(255,91,46,0.2); }
+        .pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #FF5B2E; color: white; padding: 8px 30px; border-radius: 20px; font-size: 0.9em; font-weight: 600; }
+        .pricing-card h3 { font-size: 2em; margin-bottom: 15px; color: #1F2937; font-weight: 600; }
+        .pricing-card .price { font-size: 3.5em; color: #FF5B2E; font-weight: 800; margin: 25px 0; }
+        .pricing-card .price .period { font-size: 0.3em; color: #666; font-weight: 400; }
+        .pricing-card ul { text-align: left; margin: 30px 0; list-style: none; }
+        .pricing-card li { margin: 15px 0; padding-left: 30px; position: relative; font-size: 1.05em; }
+        .pricing-card li:before { content: "✓"; color: #FF5B2E; font-weight: bold; position: absolute; left: 0; font-size: 1.2em; }
+        .contact { background: linear-gradient(135deg, #1F2937 0%, #111827 100%); color: white; text-align: center; position: relative; }
+        .contact::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="white" opacity="0.05"/><circle cx="80" cy="80" r="2" fill="white" opacity="0.03"/></svg>'); }
+        .contact-content { position: relative; z-index: 2; }
+        .contact h2 { font-size: 3em; margin-bottom: 25px; font-weight: 700; }
+        .contact p { font-size: 1.3em; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .logo { max-height: 80px; margin-bottom: 30px; filter: brightness(0) invert(1); }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5em; }
+            .section-title { font-size: 2.2em; }
+            .feature-grid, .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: none; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="/boostroi-logo.png" alt="BoostROI Agency" class="logo">
+                <h1>Stop Wasting Money on Marketing That Doesn't Work</h1>
+                <p class="subtitle">Fair dinkum marketing that actually boosts your ROI. We're the Aussie agency that turns your marketing spend into profit machines. No BS, just results.</p>
+                <a href="#contact" class="cta-button">Get Your Free $1,200 ROI Audit</a>
+                <a href="#pricing" class="cta-button cta-secondary">See Our Packages</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">340%</div>
+                    <div class="stat-label">Average ROI Increase</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">45</div>
+                    <div class="stat-label">Days to First Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Happy Clients</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$50M+</div>
+                    <div class="stat-label">Revenue Generated</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section features">
+        <div class="container">
+            <h2 class="section-title">Why Aussie Businesses Choose BoostROI</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎯 ROI-Obsessed Approach</h3>
+                    <p>Every campaign is laser-focused on maximizing your return on investment. We track every dollar and show you exactly how your money is working to grow your business.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Data-Driven Decisions</h3>
+                    <p>No guesswork, no gut feelings. We use advanced analytics, A/B testing, and conversion tracking to ensure your marketing campaigns deliver measurable, profitable results.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 Proven Track Record</h3>
+                    <p>340% average ROI increase for our clients. We've helped 200+ Australian businesses generate over $50M in additional revenue through strategic marketing that actually works.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="section pricing">
+        <div class="container">
+            <h2 class="section-title">Choose Your Growth Plan</h2>
+            <p style="font-size: 1.3em; margin-bottom: 50px; color: #555;">Transparent pricing with no hidden fees. All plans include our ROI guarantee or your money back.</p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">$550<span class="period">/month</span></div>
+                    <ul>
+                        <li>Complete ROI analysis & strategy</li>
+                        <li>Campaign setup and management</li>
+                        <li>Monthly performance reporting</li>
+                        <li>Email support (business hours)</li>
+                        <li>ROI guarantee included</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="width: 100%; text-align: center; margin-top: 30px;">Get Started</a>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Pro</h3>
+                    <div class="price">$7,500<span class="period">/month</span></div>
+                    <ul>
+                        <li>Complete marketing automation</li>
+                        <li>Multi-channel campaign management</li>
+                        <li>Weekly strategy calls & optimization</li>
+                        <li>Priority support & dedicated account manager</li>
+                        <li>Advanced analytics & conversion tracking</li>
+                        <li>A/B testing & performance optimization</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="width: 100%; text-align: center; margin-top: 30px;">Start Now</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Legendary</h3>
+                    <div class="price">$15,000<span class="period">/month</span></div>
+                    <ul>
+                        <li>Full marketing department replacement</li>
+                        <li>Custom strategy development & execution</li>
+                        <li>Dedicated senior account manager</li>
+                        <li>24/7 priority support</li>
+                        <li>Enterprise-level analytics & reporting</li>
+                        <li>Custom integrations & automation</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="width: 100%; text-align: center; margin-top: 30px;">Let's Talk</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="contact-content">
+                <h2>Ready to Boost Your ROI?</h2>
+                <p>Get your free $1,200 marketing audit and see exactly how we can triple your results. No obligations, just actionable insights you can use immediately.</p>
+                <a href="https://calendly.com/boostroi-agency" class="cta-button" style="background: #FF5B2E; color: white; font-size: 1.3em; padding: 25px 50px; margin: 20px;">Book Your Free $1,200 Audit</a>
+                <p style="margin-top: 40px; font-size: 1em; opacity: 0.9;">
+                    <strong>Email:</strong> hello@boostroi.agency | <strong>Phone:</strong> +61 123 456 789<br>
+                    Based in Australia, serving ambitious businesses worldwide
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
