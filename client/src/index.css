@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(31, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(31, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(31, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(31, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  --brand: hsl(12, 100%, 58%);
+  --charcoal: hsl(210, 18%, 22%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+  --brand: hsl(12, 100%, 58%);
+  --charcoal: hsl(210, 18%, 22%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    min-height: 100vh;
+    position: relative;
+  }
+  
+  html {
+    overflow-y: auto !important;
+    height: 100%;
+  }
+  
+  /* Reset any potential scroll-blocking styles */
+  * {
+    touch-action: auto !important;
+  }
+}
+
+@layer utilities {
+  .scroll-smooth { 
+    scroll-behavior: smooth; 
+  }
+  
+  .sticky-cta { 
+    transform: translateY(100px); 
+    opacity: 0; 
+    transition: all 0.3s ease; 
+  }
+  
+  .sticky-cta.show { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+  
+  .hover-lift { 
+    transition: transform 0.3s ease; 
+  }
+  
+  .hover-lift:hover { 
+    transform: translateY(-5px); 
+  }
+  
+  .gradient-bg { 
+    background: linear-gradient(135deg, hsl(12, 100%, 58%) 0%, hsl(12, 90%, 65%) 100%); 
+  }
+  
+  .pattern-bg { 
+    background-image: radial-gradient(circle at 20% 80%, hsla(12, 100%, 58%, 0.1) 0%, transparent 50%), 
+                      radial-gradient(circle at 80% 20%, hsla(12, 100%, 58%, 0.1) 0%, transparent 50%); 
+  }
+
+  .text-brand {
+    color: hsl(12, 100%, 58%);
+  }
+
+  .text-charcoal {
+    color: hsl(210, 18%, 22%);
+  }
+
+  .bg-brand {
+    background-color: hsl(12, 100%, 58%);
+  }
+
+  .bg-charcoal {
+    background-color: hsl(210, 18%, 22%);
+  }
+
+  .border-brand {
+    border-color: hsl(12, 100%, 58%);
+  }
+
+  .border-charcoal {
+    border-color: hsl(210, 18%, 22%);
+  }
+}
