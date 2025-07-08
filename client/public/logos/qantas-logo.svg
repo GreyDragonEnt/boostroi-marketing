@@ -1,0 +1,11 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text { font-family: Arial, sans-serif; font-weight: bold; }
+  </style>
+  <!-- Qantas Red Background -->
+  <rect width="200" height="60" fill="#E30613" rx="8"/>
+  <!-- Qantas Text -->
+  <text x="100" y="38" text-anchor="middle" fill="white" class="logo-text" font-size="20">QANTAS</text>
+  <!-- Kangaroo silhouette (simplified) -->
+  <path d="M160 20 C165 18, 170 22, 165 28 C162 32, 158 30, 160 20" fill="white"/>
+</svg>

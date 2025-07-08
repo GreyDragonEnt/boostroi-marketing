@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoostROI Marketing - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #FF5B2E 0%, #1F2937 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .btn {
+            background: #FF5B2E;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #e64a26;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/boostroi-logo.svg" alt="BoostROI Logo" class="logo" />
+        <h1>BoostROI Marketing Platform</h1>
+        <p style="font-size: 1.5em; margin-bottom: 30px;">
+            Maximize Your Marketing Returns with Data-Driven Strategies
+        </p>
+        
+        <div style="margin: 20px 0;">
+            <a href="#" class="btn">Calculate ROI</a>
+            <a href="#" class="btn">Book Strategy Call</a>
+            <a href="/admin" class="btn">Admin Dashboard</a>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🚀 ROI Calculator</h3>
+                <p>Get instant projections on your marketing investment potential</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Lead Management</h3>
+                <p>Advanced lead capture and nurturing systems</p>
+            </div>
+            <div class="feature">
+                <h3>⚡ Real-time Analytics</h3>
+                <p>Track performance and optimize campaigns instantly</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 Targeted Campaigns</h3>
+                <p>Precision targeting for maximum conversion rates</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+            <h3>✅ Project Status:</h3>
+            <p>✅ Frontend Built Successfully</p>
+            <p>✅ Static Server Running on Port 3000</p>
+            <p>✅ Security Enhancements Applied</p>
+            <p>✅ Admin Dashboard Ready</p>
+            <p style="margin-top: 20px; font-style: italic;">
+                This is a test page to verify the server is working. 
+                The full React application should load at the same URL.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Simple test to verify JavaScript is working
+        console.log('BoostROI Marketing Platform - Test Page Loaded Successfully!');
+        
+        // Add some basic interactivity
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (btn.textContent === 'Admin Dashboard') {
+                    return; // Let the admin link work
+                }
+                e.preventDefault();
+                alert('Feature coming soon! This is a test page.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -9,10 +9,8 @@ import { ArrowLeft } from "lucide-react";
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -63,6 +61,7 @@ const CheckoutForm = () => {
   );
 };
 
+// Main Checkout component that handles Stripe configuration
 export default function Checkout() {
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(true);
@@ -91,45 +90,44 @@ export default function Checkout() {
       });
   }, []);
 
-  if (loading) {
+  // If Stripe is not configured, show a message
+  if (!stripePromise) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-brand border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-gray-600">Redirecting to secure checkout...</p>
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-6 py-12">
+          <div className="max-w-2xl mx-auto">
+            <div className="mb-8">
+              <Link href="/" className="inline-flex items-center text-brand hover:text-brand/80 transition-colors">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Home
+              </Link>
+            </div>
+            
+            <div className="bg-white rounded-lg p-8 shadow-sm">
+              <h1 className="text-3xl font-montserrat font-bold text-charcoal mb-8 text-center">
+                Checkout Unavailable
+              </h1>
+              
+              <p className="text-center text-gray-600 mb-8">
+                Payment processing is not configured in development mode.
+              </p>
+              
+              <div className="text-center">
+                <Button asChild className="bg-brand hover:bg-brand/90">
+                  <Link href="/#pricing">Return to Pricing</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
+  // If Stripe is configured, render the checkout form
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-6 py-12">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <Link href="/" className="inline-flex items-center text-brand hover:text-brand/80 transition-colors">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Link>
-          </div>
-          
-          <div className="bg-white rounded-lg p-8 shadow-sm">
-            <h1 className="text-3xl font-montserrat font-bold text-charcoal mb-8 text-center">
-              Secure Checkout
-            </h1>
-            
-            <p className="text-center text-gray-600 mb-8">
-              There was an issue redirecting to checkout. Please try again or contact support.
-            </p>
-            
-            <div className="text-center">
-              <Button asChild className="bg-brand hover:bg-brand/90">
-                <Link href="/#pricing">Return to Pricing</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 }

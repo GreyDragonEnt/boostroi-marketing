@@ -238,8 +238,11 @@ var pool = new Proxy({}, {
 });
 var db = new Proxy({}, {
   get(target, prop) {
-    const { db: db2 } = getDatabase();
-    return db2[prop];
+    const { db: database } = getDatabase();
+    if (!database) {
+      throw new Error("Database not initialized");
+    }
+    return database[prop];
   }
 });
 
@@ -544,10 +547,99 @@ We've added you to our community of forward-thinking business owners who are com
 
 Best regards,
 The BoostROI Team`
+  }),
+  newsletterConfirmation: (email) => ({
+    subject: `Welcome to the BoostROI Newsletter!`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #FF5B2E;">Thank you for subscribing!</h2>
+        <p>Hi there,</p>
+        <p>Welcome to the BoostROI newsletter! You've successfully subscribed to our weekly marketing insights.</p>
+        <p>Every week, you'll receive:</p>
+        <ul>
+          <li>Latest marketing trends and strategies</li>
+          <li>ROI optimization tips from our experts</li>
+          <li>Case studies from successful campaigns</li>
+          <li>Exclusive tools and resources</li>
+          <li>Industry insights and best practices</li>
+        </ul>
+        <p>Your first newsletter will arrive within the next week, packed with actionable insights to boost your marketing ROI.</p>
+        <p>In the meantime, feel free to explore our website for free resources and tools.</p>
+        <br>
+        <p>Best regards,<br>The BoostROI Team</p>
+        <p style="color: #666; font-size: 12px;">BoostROI Agency - Maximizing Your Marketing Returns</p>
+        <p style="color: #666; font-size: 10px;">You can unsubscribe at any time by replying to any newsletter email.</p>
+      </div>
+    `,
+    text: `Thank you for subscribing!
+
+Welcome to the BoostROI newsletter! You've successfully subscribed to our weekly marketing insights.
+
+Every week, you'll receive latest marketing trends, ROI optimization tips, case studies, and industry insights.
+
+Your first newsletter will arrive within the next week.
+
+Best regards,
+The BoostROI Team`
   })
 };
 
+// server/test-storage.ts
+import fs from "fs";
+import path from "path";
+var DATA_DIR = path.join(process.cwd(), "test-data");
+var EMAILS_FILE = path.join(DATA_DIR, "emails.json");
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+var TestStorage = class {
+  getEmails() {
+    try {
+      if (fs.existsSync(EMAILS_FILE)) {
+        const content = fs.readFileSync(EMAILS_FILE, "utf8");
+        return JSON.parse(content);
+      }
+    } catch (error) {
+      console.error("Error reading emails file:", error);
+    }
+    return [];
+  }
+  saveEmails(emails) {
+    try {
+      fs.writeFileSync(EMAILS_FILE, JSON.stringify(emails, null, 2));
+    } catch (error) {
+      console.error("Error saving emails file:", error);
+    }
+  }
+  addEmail(email, type, data) {
+    const emails = this.getEmails();
+    const entry = {
+      id: Date.now(),
+      email,
+      type,
+      data,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    emails.push(entry);
+    this.saveEmails(emails);
+    console.log(`\u2705 Email stored: ${email} (${type})`);
+    return entry;
+  }
+  getAllEmails() {
+    return this.getEmails();
+  }
+  getEmailsByType(type) {
+    return this.getEmails().filter((entry) => entry.type === type);
+  }
+  getEmailsByAddress(email) {
+    return this.getEmails().filter((entry) => entry.email === email);
+  }
+};
+var testStorage = new TestStorage();
+
 // server/routes.ts
+import { format, parseISO } from "date-fns";
+import path2 from "path";
 async function registerRoutes(app2) {
   app2.get("/api/health", (req, res) => {
     res.json({
@@ -594,12 +686,63 @@ async function registerRoutes(app2) {
   });
   app2.post("/api/calc", async (req, res) => {
     try {
+      console.log("ROI Calculator request body:", req.body);
       const validatedData = insertROICalculationSchema.parse(req.body);
-      const calculation = await storage.createROICalculation(validatedData);
-      res.json(calculation);
+      console.log("Validated data:", validatedData);
+      try {
+        const calculation = await storage.createROICalculation(validatedData);
+        console.log("Calculation result:", calculation);
+        res.json(calculation);
+      } catch (dbError) {
+        console.log("Database error, falling back to in-memory calculation:", dbError instanceof Error ? dbError.message : String(dbError));
+        const monthlySpend = parseFloat(validatedData.monthlySpend);
+        const monthlyRevenue = parseFloat(validatedData.monthlyRevenue);
+        const industryMultipliers = {
+          "E-commerce": 2.8,
+          "SaaS": 3.2,
+          "Professional Services": 2.5,
+          "Healthcare": 2,
+          "Real Estate": 2.3,
+          "Other": 2.4
+        };
+        const multiplier = industryMultipliers[validatedData.industry] || 2.4;
+        const projectedRevenue = monthlyRevenue * multiplier;
+        const additionalRevenue = projectedRevenue - monthlyRevenue;
+        const additionalProfit = additionalRevenue * 0.7;
+        const roiImprovement = (projectedRevenue - monthlyRevenue) / monthlyRevenue * 100;
+        const fallbackCalculation = {
+          id: Date.now(),
+          monthlySpend: validatedData.monthlySpend,
+          monthlyRevenue: validatedData.monthlyRevenue,
+          industry: validatedData.industry,
+          channels: validatedData.channels,
+          email: validatedData.email || null,
+          projectedRevenue: projectedRevenue.toFixed(2),
+          additionalProfit: additionalProfit.toFixed(2),
+          roiImprovement: roiImprovement.toFixed(2),
+          createdAt: /* @__PURE__ */ new Date()
+        };
+        if (validatedData.email) {
+          testStorage.addEmail(validatedData.email, "roi-calculation", {
+            monthlySpend: validatedData.monthlySpend,
+            monthlyRevenue: validatedData.monthlyRevenue,
+            industry: validatedData.industry,
+            channels: validatedData.channels,
+            projectedRevenue: projectedRevenue.toFixed(2),
+            additionalProfit: additionalProfit.toFixed(2),
+            roiImprovement: roiImprovement.toFixed(2)
+          });
+        }
+        console.log("Fallback calculation result:", fallbackCalculation);
+        res.json(fallbackCalculation);
+      }
     } catch (error) {
       console.error("Error creating ROI calculation:", error);
-      res.status(400).json({ error: "Invalid calculation data" });
+      if (error instanceof Error) {
+        res.status(400).json({ error: `Invalid calculation data: ${error.message}` });
+      } else {
+        res.status(400).json({ error: "Invalid calculation data" });
+      }
     }
   });
   app2.post("/api/roi-audit", async (req, res) => {
@@ -626,16 +769,42 @@ async function registerRoutes(app2) {
   app2.post("/api/lead-capture", async (req, res) => {
     try {
       const validatedData = insertLeadSchema.parse(req.body);
-      const lead = await storage.createLead(validatedData);
-      const template = emailTemplates.leadCaptureConfirmation(validatedData.email);
-      await sendEmail({
-        to: validatedData.email,
-        from: "hello@boostroi.agency",
-        subject: template.subject,
-        html: template.html,
-        text: template.text
-      });
-      res.json(lead);
+      try {
+        const lead = await storage.createLead(validatedData);
+        const template = emailTemplates.leadCaptureConfirmation(validatedData.email);
+        await sendEmail({
+          to: validatedData.email,
+          from: "hello@boostroi.agency",
+          subject: template.subject,
+          html: template.html,
+          text: template.text
+        });
+        res.json(lead);
+      } catch (dbError) {
+        console.log("Database error, using test storage for lead:", dbError instanceof Error ? dbError.message : String(dbError));
+        const entry = testStorage.addEmail(validatedData.email, "lead", validatedData);
+        try {
+          const template = emailTemplates.leadCaptureConfirmation(validatedData.email);
+          await sendEmail({
+            to: validatedData.email,
+            from: "hello@boostroi.agency",
+            subject: template.subject,
+            html: template.html,
+            text: template.text
+          });
+        } catch (emailError) {
+          console.log("Email send failed (likely not configured):", emailError instanceof Error ? emailError.message : String(emailError));
+        }
+        res.json({
+          id: entry.id,
+          email: entry.email,
+          name: validatedData.name,
+          leadMagnet: validatedData.leadMagnet,
+          trigger: validatedData.trigger,
+          status: "new",
+          createdAt: entry.timestamp
+        });
+      }
     } catch (error) {
       console.error("Error creating lead:", error);
       res.status(400).json({ error: "Invalid lead data" });
@@ -644,8 +813,32 @@ async function registerRoutes(app2) {
   app2.post("/api/newsletter-signup", async (req, res) => {
     try {
       const validatedData = insertNewsletterSubscriptionSchema.parse(req.body);
-      const subscription = await storage.createNewsletterSubscription(validatedData);
-      res.json(subscription);
+      try {
+        const subscription = await storage.createNewsletterSubscription(validatedData);
+        res.json(subscription);
+      } catch (dbError) {
+        console.log("Database error, using test storage for newsletter:", dbError instanceof Error ? dbError.message : String(dbError));
+        const entry = testStorage.addEmail(validatedData.email, "newsletter", validatedData);
+        try {
+          const template = emailTemplates.newsletterConfirmation(validatedData.email);
+          await sendEmail({
+            to: validatedData.email,
+            from: "hello@boostroi.agency",
+            subject: template.subject,
+            html: template.html,
+            text: template.text
+          });
+        } catch (emailError) {
+          console.log("Email send failed (likely not configured):", emailError instanceof Error ? emailError.message : String(emailError));
+        }
+        res.json({
+          id: entry.id,
+          email: entry.email,
+          status: "active",
+          source: validatedData.source || "website",
+          createdAt: entry.timestamp
+        });
+      }
     } catch (error) {
       console.error("Error creating newsletter subscription:", error);
       res.status(400).json({ error: "Invalid subscription data" });
@@ -741,30 +934,349 @@ async function registerRoutes(app2) {
       received: req.body
     });
   });
+  app2.get("/test", (req, res) => {
+    const testHTML = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Server Test</title>
+          <style>
+              body { font-family: Arial, sans-serif; background: #f0f8ff; padding: 20px; }
+              .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+              h1 { color: #007cba; }
+              .status { background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; margin: 15px 0; }
+              .logo-test { border: 2px solid #ccc; padding: 20px; margin: 15px 0; text-align: center; }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <h1>\u{1F389} BoostROI Server is Working!</h1>
+              <div class="status">
+                  <strong>\u2705 Server Status: Active</strong><br>
+                  <strong>\u{1F4E1} Port:</strong> 9000<br>
+                  <strong>\u23F0 Time:</strong> ${(/* @__PURE__ */ new Date()).toLocaleString()}<br>
+                  <strong>\u{1F310} URL:</strong> http://localhost:9000/test
+              </div>
+              
+              <div class="logo-test">
+                  <h3>Logo Test:</h3>
+                  <img src="/boostroi-logo.svg" alt="BoostROI Logo" style="height: 60px; border: 1px solid #ddd;">
+                  <p>If you see the logo above, the file is loading correctly.</p>
+              </div>
+              
+              <p>This page is served directly by the Express server.</p>
+              <p><a href="/" style="color: #007cba;">\u2190 Back to React App</a></p>
+              <button onclick="window.open('/', '_blank')" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                  Open React App in New Tab
+              </button>
+          </div>
+          <script>
+              console.log('\u2705 Server test page loaded');
+              console.log('Current time:', new Date());
+          </script>
+      </body>
+      </html>
+    `;
+    res.send(testHTML);
+  });
+  app2.post("/api/calc-debug", async (req, res) => {
+    console.log("=== ROI CALC DEBUG START ===");
+    console.log("Request body:", JSON.stringify(req.body, null, 2));
+    console.log("Request headers:", req.headers);
+    const { monthlySpend, monthlyRevenue, industry, channels, email } = req.body;
+    if (!monthlySpend || !monthlyRevenue || !industry || !channels) {
+      console.log("Missing required fields");
+      return res.status(400).json({
+        error: "Missing required fields",
+        received: { monthlySpend, monthlyRevenue, industry, channels, email }
+      });
+    }
+    const spend = parseFloat(monthlySpend);
+    const revenue = parseFloat(monthlyRevenue);
+    if (isNaN(spend) || isNaN(revenue)) {
+      console.log("Invalid numbers");
+      return res.status(400).json({
+        error: "Invalid numbers",
+        monthlySpend: { value: monthlySpend, parsed: spend },
+        monthlyRevenue: { value: monthlyRevenue, parsed: revenue }
+      });
+    }
+    const result = {
+      id: Date.now(),
+      monthlySpend: spend.toString(),
+      monthlyRevenue: revenue.toString(),
+      industry,
+      channels,
+      email: email || null,
+      projectedRevenue: (revenue * 2.5).toFixed(2),
+      additionalProfit: (revenue * 1.5 * 0.7).toFixed(2),
+      roiImprovement: "150.00",
+      createdAt: /* @__PURE__ */ new Date()
+    };
+    console.log("Calculation result:", result);
+    console.log("=== ROI CALC DEBUG END ===");
+    res.json(result);
+  });
+  app2.get("/api/test-emails", (req, res) => {
+    try {
+      const emails = testStorage.getAllEmails();
+      res.json({
+        total: emails.length,
+        byType: {
+          newsletter: testStorage.getEmailsByType("newsletter").length,
+          lead: testStorage.getEmailsByType("lead").length,
+          "roi-calculation": testStorage.getEmailsByType("roi-calculation").length,
+          audit: testStorage.getEmailsByType("audit").length,
+          "case-study": testStorage.getEmailsByType("case-study").length
+        },
+        emails: emails.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      });
+    } catch (error) {
+      console.error("Error retrieving test emails:", error);
+      res.status(500).json({ error: "Failed to retrieve emails" });
+    }
+  });
+  app2.get("/email-test", (req, res) => {
+    const testPagePath = path2.join(process.cwd(), "email-collection-test.html");
+    res.sendFile(testPagePath);
+  });
+  const authenticateAdmin = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    const token = authHeader.substring(7);
+    if (token === "demo-admin-token") {
+      req.user = { id: 1, username: "admin" };
+      next();
+    } else {
+      res.status(401).json({ error: "Invalid token" });
+    }
+  };
+  app2.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      if (username === "admin" && password === "boost123") {
+        const user = { id: 1, username: "admin", email: "admin@boostroi.agency" };
+        const token = "demo-admin-token";
+        res.json({
+          success: true,
+          token,
+          user
+        });
+      } else {
+        res.status(401).json({ error: "Invalid credentials" });
+      }
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+  app2.get("/api/admin/site-data", authenticateAdmin, async (req, res) => {
+    try {
+      const emails = testStorage.getAllEmails();
+      const recentActivity = emails.slice(-5).map((email) => ({
+        type: `${email.type} collection`,
+        description: `Email collected: ${email.email}`,
+        timestamp: format(parseISO(email.timestamp), "PPP p")
+      }));
+      res.json({
+        totalLeads: testStorage.getEmailsByType("lead").length,
+        newsletterSubscribers: testStorage.getEmailsByType("newsletter").length,
+        roiCalculations: testStorage.getEmailsByType("roi-calculation").length,
+        activeClients: 0,
+        // Will be populated when client management is implemented
+        recentActivity
+      });
+    } catch (error) {
+      console.error("Error fetching site data:", error);
+      res.status(500).json({ error: "Failed to fetch site data" });
+    }
+  });
+  app2.get("/api/admin/clients", authenticateAdmin, async (req, res) => {
+    try {
+      const demoClients = [
+        {
+          id: 1,
+          businessName: "TechStart Solutions",
+          contactName: "Sarah Johnson",
+          email: "sarah@techstart.com",
+          phone: "+1 (555) 123-4567",
+          industry: "SaaS",
+          status: "active",
+          monthlyRevenue: 15e4,
+          lastContact: "2025-07-05T10:00:00Z",
+          notes: "Interested in expanding PPC campaigns. Currently running Google Ads with 3.2x ROAS.",
+          createdAt: "2025-06-01T09:00:00Z"
+        },
+        {
+          id: 2,
+          businessName: "Green Earth Retail",
+          contactName: "Mike Chen",
+          email: "mike@greenearth.com",
+          phone: "+1 (555) 987-6543",
+          industry: "E-commerce",
+          status: "prospect",
+          monthlyRevenue: 85e3,
+          lastContact: "2025-07-03T14:30:00Z",
+          notes: "E-commerce store looking to improve conversion rates. Discussed social media marketing strategy.",
+          createdAt: "2025-06-15T11:00:00Z"
+        }
+      ];
+      res.json(demoClients);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+      res.status(500).json({ error: "Failed to fetch clients" });
+    }
+  });
+  app2.post("/api/admin/clients", authenticateAdmin, async (req, res) => {
+    try {
+      const clientData = req.body;
+      const newClient = {
+        id: Date.now(),
+        ...clientData,
+        createdAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      console.log("New client added:", newClient);
+      res.json(newClient);
+    } catch (error) {
+      console.error("Error adding client:", error);
+      res.status(500).json({ error: "Failed to add client" });
+    }
+  });
+  app2.put("/api/admin/clients/:id", authenticateAdmin, async (req, res) => {
+    try {
+      const clientId = req.params.id;
+      const clientData = req.body;
+      console.log(`Client ${clientId} updated:`, clientData);
+      res.json({ id: clientId, ...clientData });
+    } catch (error) {
+      console.error("Error updating client:", error);
+      res.status(500).json({ error: "Failed to update client" });
+    }
+  });
+  app2.get("/api/admin/meetings", authenticateAdmin, async (req, res) => {
+    try {
+      const demoMeetings = [
+        {
+          id: 1,
+          clientId: 1,
+          clientName: "TechStart Solutions",
+          title: "Q3 Strategy Review",
+          type: "video",
+          date: "2025-07-10T15:00:00Z",
+          duration: 60,
+          status: "scheduled",
+          notes: "Review current campaigns and discuss Q3 strategy. Prepare ROI analysis.",
+          createdAt: "2025-07-05T10:00:00Z"
+        },
+        {
+          id: 2,
+          clientId: 2,
+          clientName: "Green Earth Retail",
+          title: "Initial Consultation",
+          type: "call",
+          date: "2025-07-08T13:00:00Z",
+          duration: 30,
+          status: "completed",
+          notes: "Discussed current marketing challenges. Client interested in social media expansion.",
+          createdAt: "2025-07-03T14:30:00Z"
+        }
+      ];
+      res.json(demoMeetings);
+    } catch (error) {
+      console.error("Error fetching meetings:", error);
+      res.status(500).json({ error: "Failed to fetch meetings" });
+    }
+  });
+  app2.post("/api/admin/meetings", authenticateAdmin, async (req, res) => {
+    try {
+      const meetingData = req.body;
+      const newMeeting = {
+        id: Date.now(),
+        ...meetingData,
+        status: "scheduled",
+        createdAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      console.log("New meeting scheduled:", newMeeting);
+      res.json(newMeeting);
+    } catch (error) {
+      console.error("Error scheduling meeting:", error);
+      res.status(500).json({ error: "Failed to schedule meeting" });
+    }
+  });
+  app2.get("/api/admin/content", authenticateAdmin, async (req, res) => {
+    try {
+      const demoContent = [
+        {
+          id: "hero-title",
+          section: "Hero Section",
+          title: "Main Headline",
+          content: "Boost Your Marketing ROI by 200-900% in 90 Days",
+          lastUpdated: "2025-07-01T10:00:00Z"
+        },
+        {
+          id: "hero-subtitle",
+          section: "Hero Section",
+          title: "Subtitle",
+          content: "Data-driven marketing strategies that deliver measurable results for Australian businesses",
+          lastUpdated: "2025-07-01T10:00:00Z"
+        },
+        {
+          id: "pricing-starter",
+          section: "Pricing",
+          title: "Starter Package Description",
+          content: "Perfect for small businesses ready to optimize their marketing spend and see immediate improvements.",
+          lastUpdated: "2025-06-28T14:30:00Z"
+        }
+      ];
+      res.json(demoContent);
+    } catch (error) {
+      console.error("Error fetching content:", error);
+      res.status(500).json({ error: "Failed to fetch content" });
+    }
+  });
+  app2.put("/api/admin/content/:id", authenticateAdmin, async (req, res) => {
+    try {
+      const contentId = req.params.id;
+      const contentData = req.body;
+      const updatedContent = {
+        id: contentId,
+        ...contentData,
+        lastUpdated: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      console.log(`Content ${contentId} updated:`, updatedContent);
+      res.json(updatedContent);
+    } catch (error) {
+      console.error("Error updating content:", error);
+      res.status(500).json({ error: "Failed to update content" });
+    }
+  });
 }
 
 // server/vite.ts
 import express from "express";
-import fs from "fs";
-import path2 from "path";
+import fs2 from "fs";
+import path4 from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 
 // vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import path3 from "path";
 var vite_config_default = defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets")
+      "@": path3.resolve(import.meta.dirname, "client", "src"),
+      "@shared": path3.resolve(import.meta.dirname, "shared")
     }
   },
-  root: path.resolve(import.meta.dirname, "client"),
+  root: path3.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path3.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true
   },
   server: {
@@ -808,13 +1320,13 @@ async function setupVite(app2, server) {
   app2.use("*", async (req, res, next) => {
     const url = req.originalUrl;
     try {
-      const clientTemplate = path2.resolve(
+      const clientTemplate = path4.resolve(
         import.meta.dirname,
         "..",
         "client",
         "index.html"
       );
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      let template = await fs2.promises.readFile(clientTemplate, "utf-8");
       template = template.replace(
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`
@@ -828,15 +1340,15 @@ async function setupVite(app2, server) {
   });
 }
 function serveStatic(app2) {
-  const distPath = path2.resolve(import.meta.dirname, "public");
-  if (!fs.existsSync(distPath)) {
+  const distPath = path4.resolve(import.meta.dirname, "public");
+  if (!fs2.existsSync(distPath)) {
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`
     );
   }
   app2.use(express.static(distPath));
   app2.use("*", (_req, res) => {
-    res.sendFile(path2.resolve(distPath, "index.html"));
+    res.sendFile(path4.resolve(distPath, "index.html"));
   });
 }
 
@@ -847,7 +1359,7 @@ app.use(express2.json());
 app.use(express2.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   const start = Date.now();
-  const path3 = req.path;
+  const path5 = req.path;
   let capturedJsonResponse = void 0;
   const originalResJson = res.json;
   res.json = function(bodyJson, ...args) {
@@ -856,8 +1368,8 @@ app.use((req, res, next) => {
   };
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path3.startsWith("/api")) {
-      let logLine = `${req.method} ${path3} ${res.statusCode} in ${duration}ms`;
+    if (path5.startsWith("/api")) {
+      let logLine = `${req.method} ${path5} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
@@ -889,8 +1401,8 @@ async function startServer() {
     console.log("3. Health check endpoint added \u2713");
     const server = createServer(app);
     console.log("4. HTTP server created \u2713");
-    const port = parseInt(process.env.PORT || "5000", 10);
-    const host = process.env.HOST || "0.0.0.0";
+    const port = parseInt(process.env.PORT || process.env.REPL_PORT || "5000", 10);
+    const host = process.env.HOST || process.env.REPL_HOST || "0.0.0.0";
     console.log(`4.1. Target binding: ${host}:${port}`);
     server.on("error", (error) => {
       console.error("Server error:", error);
@@ -899,12 +1411,23 @@ async function startServer() {
         process.exit(1);
       }
     });
-    server.listen(port, host, () => {
+    const serverTimeout = setTimeout(() => {
+      console.error("Server startup timeout - attempting alternative binding");
+      process.exit(1);
+    }, 3e4);
+    server.listen(port, host, async () => {
+      clearTimeout(serverTimeout);
       console.log(`5. \u2713 Server listening on ${host}:${port}`);
       console.log(`\u2713 Environment: ${process.env.NODE_ENV || "development"}`);
       console.log(`\u2713 Process ID: ${process.pid}`);
       console.log(`\u2713 Available environment variables: PORT=${process.env.PORT}, HOST=${process.env.HOST}`);
       log(`serving on port ${port}`);
+      try {
+        await registerRoutes(app);
+        console.log("6. Routes registered successfully \u2713");
+      } catch (error) {
+        console.error("Warning: Some routes failed to register:", error);
+      }
       if (process.env.NODE_ENV !== "development") {
         console.log("7. Setting up static file serving...");
         try {
@@ -914,20 +1437,16 @@ async function startServer() {
           console.error("Warning: Static file serving failed:", error);
         }
       }
-      registerRoutes(app).then(() => {
-        console.log("6. Routes registered successfully \u2713");
-        console.log("\u2713 Server fully initialized and ready for requests");
-      }).catch((error) => {
-        console.error("Warning: Some routes failed to register:", error);
-      });
       if (process.env.NODE_ENV === "development") {
         console.log("9. Setting up Vite in development mode...");
-        setupVite(app, server).then(() => {
+        try {
+          await setupVite(app, server);
           console.log("10. Vite setup completed \u2713");
-        }).catch((error) => {
+        } catch (error) {
           console.error("Warning: Vite setup failed:", error);
-        });
+        }
       }
+      console.log("\u2713 Server fully initialized and ready for requests");
     });
   } catch (error) {
     console.error("FATAL: Failed to start server:", error);

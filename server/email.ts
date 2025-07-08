@@ -182,5 +182,40 @@ We've added you to our community of forward-thinking business owners who are com
 
 Best regards,
 The BoostROI Team`
+  }),
+
+  newsletterConfirmation: (email: string) => ({
+    subject: `Welcome to the BoostROI Newsletter!`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #FF5B2E;">Thank you for subscribing!</h2>
+        <p>Hi there,</p>
+        <p>Welcome to the BoostROI newsletter! You've successfully subscribed to our weekly marketing insights.</p>
+        <p>Every week, you'll receive:</p>
+        <ul>
+          <li>Latest marketing trends and strategies</li>
+          <li>ROI optimization tips from our experts</li>
+          <li>Case studies from successful campaigns</li>
+          <li>Exclusive tools and resources</li>
+          <li>Industry insights and best practices</li>
+        </ul>
+        <p>Your first newsletter will arrive within the next week, packed with actionable insights to boost your marketing ROI.</p>
+        <p>In the meantime, feel free to explore our website for free resources and tools.</p>
+        <br>
+        <p>Best regards,<br>The BoostROI Team</p>
+        <p style="color: #666; font-size: 12px;">BoostROI Agency - Maximizing Your Marketing Returns</p>
+        <p style="color: #666; font-size: 10px;">You can unsubscribe at any time by replying to any newsletter email.</p>
+      </div>
+    `,
+    text: `Thank you for subscribing!
+
+Welcome to the BoostROI newsletter! You've successfully subscribed to our weekly marketing insights.
+
+Every week, you'll receive latest marketing trends, ROI optimization tips, case studies, and industry insights.
+
+Your first newsletter will arrive within the next week.
+
+Best regards,
+The BoostROI Team`
   })
 };

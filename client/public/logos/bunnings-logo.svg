@@ -1,0 +1,10 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text { font-family: Arial, sans-serif; font-weight: bold; }
+  </style>
+  <!-- Bunnings Green Background -->
+  <rect width="200" height="60" fill="#00A651" rx="8"/>
+  <!-- Bunnings Text -->
+  <text x="100" y="32" text-anchor="middle" fill="white" class="logo-text" font-size="16">BUNNINGS</text>
+  <text x="100" y="48" text-anchor="middle" fill="white" class="logo-text" font-size="12">WAREHOUSE</text>
+</svg>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Collection Test - BoostROI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #FF5B2E;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF5B2E;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #FF5B2E;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background: #e54a26;
+        }
+        .results {
+            background: #e8f5e8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #4caf50;
+        }
+        .error {
+            background: #ffeaea;
+            color: #d32f2f;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #f44336;
+        }
+        .email-list {
+            background: #f0f8ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #2196f3;
+        }
+        .email-entry {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 3px solid #2196f3;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Email Collection Test Dashboard</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Test all email collection points on the BoostROI website and verify data storage.
+        </p>
+
+        <!-- Email Collection Stats -->
+        <div class="test-section">
+            <h3>📊 Current Email Collection Stats</h3>
+            <div id="statsContainer">
+                <button onclick="loadStats()">Load Current Stats</button>
+            </div>
+        </div>
+
+        <!-- Newsletter Signup Test -->
+        <div class="test-section">
+            <h3>📰 Newsletter Signup Test</h3>
+            <div class="form-group">
+                <label for="newsletterEmail">Email Address:</label>
+                <input type="email" id="newsletterEmail" placeholder="test-newsletter@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="newsletterSource">Source:</label>
+                <select id="newsletterSource">
+                    <option value="website">Website</option>
+                    <option value="footer">Footer</option>
+                    <option value="popup">Popup</option>
+                </select>
+            </div>
+            <button onclick="testNewsletter()">Test Newsletter Signup</button>
+            <div id="newsletterResult"></div>
+        </div>
+
+        <!-- Lead Capture Test -->
+        <div class="test-section">
+            <h3>🎯 Lead Capture Test</h3>
+            <div class="form-group">
+                <label for="leadEmail">Email Address:</label>
+                <input type="email" id="leadEmail" placeholder="test-lead@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="leadName">Name:</label>
+                <input type="text" id="leadName" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label for="leadMagnet">Lead Magnet:</label>
+                <select id="leadMagnet">
+                    <option value="ROI Guide">ROI Guide</option>
+                    <option value="Case Study">Case Study</option>
+                    <option value="Free Audit">Free Audit</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="leadTrigger">Trigger:</label>
+                <select id="leadTrigger">
+                    <option value="exit-intent">Exit Intent</option>
+                    <option value="scroll">Scroll</option>
+                    <option value="time">Time Based</option>
+                </select>
+            </div>
+            <button onclick="testLead()">Test Lead Capture</button>
+            <div id="leadResult"></div>
+        </div>
+
+        <!-- ROI Calculator Test -->
+        <div class="test-section">
+            <h3>💰 ROI Calculator Test</h3>
+            <div class="form-group">
+                <label for="roiEmail">Email Address (optional):</label>
+                <input type="email" id="roiEmail" placeholder="test-roi@example.com">
+            </div>
+            <div class="form-group">
+                <label for="monthlySpend">Monthly Marketing Spend:</label>
+                <input type="number" id="monthlySpend" placeholder="5000" required>
+            </div>
+            <div class="form-group">
+                <label for="monthlyRevenue">Monthly Revenue:</label>
+                <input type="number" id="monthlyRevenue" placeholder="50000" required>
+            </div>
+            <div class="form-group">
+                <label for="industry">Industry:</label>
+                <select id="industry">
+                    <option value="E-commerce">E-commerce</option>
+                    <option value="SaaS">SaaS</option>
+                    <option value="Professional Services">Professional Services</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="channels">Marketing Channels:</label>
+                <input type="text" id="channels" placeholder="Google Ads, Facebook, LinkedIn" required>
+            </div>
+            <button onclick="testROI()">Test ROI Calculator</button>
+            <div id="roiResult"></div>
+        </div>
+
+        <!-- View All Collected Emails -->
+        <div class="test-section">
+            <h3>📋 All Collected Emails</h3>
+            <button onclick="loadEmails()">Refresh Email List</button>
+            <button onclick="clearEmails()" style="background: #f44336;">Clear All Test Data</button>
+            <div id="emailList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        async function apiCall(method, endpoint, data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                return { error: error.message };
+            }
+        }
+
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            const className = isError ? 'error' : 'results';
+            element.innerHTML = `<div class="${className}"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+        }
+
+        async function testNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            const source = document.getElementById('newsletterSource').value;
+            
+            if (!email) {
+                showResult('newsletterResult', { error: 'Email is required' }, true);
+                return;
+            }
+
+            const result = await apiCall('POST', '/newsletter-signup', { email, source });
+            showResult('newsletterResult', result, !!result.error);
+        }
+
+        async function testLead() {
+            const email = document.getElementById('leadEmail').value;
+            const name = document.getElementById('leadName').value;
+            const leadMagnet = document.getElementById('leadMagnet').value;
+            const trigger = document.getElementById('leadTrigger').value;
+            
+            if (!email || !name) {
+                showResult('leadResult', { error: 'Email and name are required' }, true);
+                return;
+            }
+
+            const result = await apiCall('POST', '/lead-capture', { email, name, leadMagnet, trigger });
+            showResult('leadResult', result, !!result.error);
+        }
+
+        async function testROI() {
+            const email = document.getElementById('roiEmail').value;
+            const monthlySpend = document.getElementById('monthlySpend').value;
+            const monthlyRevenue = document.getElementById('monthlyRevenue').value;
+            const industry = document.getElementById('industry').value;
+            const channels = document.getElementById('channels').value;
+            
+            if (!monthlySpend || !monthlyRevenue || !channels) {
+                showResult('roiResult', { error: 'Monthly spend, revenue, and channels are required' }, true);
+                return;
+            }
+
+            const data = { monthlySpend, monthlyRevenue, industry, channels };
+            if (email) data.email = email;
+
+            const result = await apiCall('POST', '/calc', data);
+            showResult('roiResult', result, !!result.error);
+        }
+
+        async function loadStats() {
+            const result = await apiCall('GET', '/test-emails');
+            if (result.error) {
+                showResult('statsContainer', result, true);
+                return;
+            }
+
+            const statsHtml = `
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">${result.total}</div>
+                        <div class="stat-label">Total Emails</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${result.byType.newsletter}</div>
+                        <div class="stat-label">Newsletter</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${result.byType.lead}</div>
+                        <div class="stat-label">Leads</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${result.byType['roi-calculation']}</div>
+                        <div class="stat-label">ROI Calculations</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${result.byType.audit}</div>
+                        <div class="stat-label">Audits</div>
+                    </div>
+                </div>
+                <button onclick="loadStats()">Refresh Stats</button>
+            `;
+            document.getElementById('statsContainer').innerHTML = statsHtml;
+        }
+
+        async function loadEmails() {
+            const result = await apiCall('GET', '/test-emails');
+            if (result.error) {
+                showResult('emailList', result, true);
+                return;
+            }
+
+            let emailsHtml = `<h4>📧 Collected Emails (${result.total} total)</h4>`;
+            
+            if (result.emails.length === 0) {
+                emailsHtml += '<p>No emails collected yet. Try the tests above!</p>';
+            } else {
+                result.emails.forEach(entry => {
+                    emailsHtml += `
+                        <div class="email-entry">
+                            <strong>${entry.email}</strong> - <span style="color: #666;">${entry.type}</span>
+                            <br><small>Collected: ${new Date(entry.timestamp).toLocaleString()}</small>
+                            ${entry.data ? `<br><small>Data: ${JSON.stringify(entry.data)}</small>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('emailList').innerHTML = emailsHtml;
+        }
+
+        async function clearEmails() {
+            if (confirm('Are you sure you want to clear all test email data?')) {
+                try {
+                    const response = await fetch('/test-data/emails.json');
+                    if (response.ok) {
+                        // For demonstration - in a real app you'd have a delete endpoint
+                        alert('In a production app, this would clear the database. For now, restart the server to clear test data.');
+                    }
+                } catch (error) {
+                    alert('Test data will be cleared when the server restarts.');
+                }
+            }
+        }
+
+        // Load initial stats
+        window.addEventListener('load', () => {
+            loadStats();
+            loadEmails();
+        });
+    </script>
+</body>
+</html>

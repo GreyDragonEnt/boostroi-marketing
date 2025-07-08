@@ -1,6 +1,5 @@
 import { Link } from "wouter";
 import NewsletterSignup from "./newsletter-signup";
-import boostROILogo from "@assets/BoostROI-new-logo_1751787025249.png";
 
 export default function Footer() {
   const faqs = [
@@ -68,7 +67,7 @@ export default function Footer() {
             <div className="md:col-span-2">
               <div className="flex items-center mb-4">
                 <img 
-                  src={boostROILogo} 
+                  src="/boostroi-logo.svg" 
                   alt="BoostROI Agency" 
                   className="h-12 w-auto"
                 />

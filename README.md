@@ -52,7 +52,8 @@ A comprehensive marketing website for BoostROI agency featuring ROI calculation 
 3. **Set up environment variables**
    Create a `.env` file in the root directory:
    ```env
-   DATABASE_URL=postgresql://username:password@localhost:5432/boostroi_db
+   # Copy from .env.example and fill in your actual values
+   DATABASE_URL=your_postgresql_connection_string
    SENDGRID_API_KEY=your_sendgrid_api_key
    STRIPE_SECRET_KEY=your_stripe_secret_key
    VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key

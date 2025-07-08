@@ -1,0 +1,88 @@
+[
+  {
+    "id": 1751948514701,
+    "email": "test@example.com",
+    "type": "newsletter",
+    "data": {
+      "email": "test@example.com",
+      "source": "website"
+    },
+    "timestamp": "2025-07-08T04:21:54.701Z"
+  },
+  {
+    "id": 1751948521589,
+    "email": "lead@example.com",
+    "type": "lead",
+    "data": {
+      "email": "lead@example.com",
+      "name": "John Doe",
+      "leadMagnet": "ROI Guide",
+      "trigger": "exit-intent"
+    },
+    "timestamp": "2025-07-08T04:22:01.589Z"
+  },
+  {
+    "id": 1751948530044,
+    "email": "roi@example.com",
+    "type": "roi-calculation",
+    "data": {
+      "monthlySpend": "3000",
+      "monthlyRevenue": "30000",
+      "industry": "SaaS",
+      "channels": "Google Ads, LinkedIn",
+      "projectedRevenue": "96000.00",
+      "additionalProfit": "46200.00",
+      "roiImprovement": "220.00"
+    },
+    "timestamp": "2025-07-08T04:22:10.044Z"
+  },
+  {
+    "id": 1751948735605,
+    "email": "summary-test@example.com",
+    "type": "newsletter",
+    "data": {
+      "email": "summary-test@example.com",
+      "source": "website"
+    },
+    "timestamp": "2025-07-08T04:25:35.605Z"
+  },
+  {
+    "id": 1751961561083,
+    "email": "test@example.com",
+    "type": "newsletter",
+    "data": {
+      "email": "test@example.com"
+    },
+    "timestamp": "2025-07-08T07:59:21.083Z"
+  },
+  {
+    "id": 1751961739260,
+    "email": "sendgrid-test@example.com",
+    "type": "newsletter",
+    "data": {
+      "email": "sendgrid-test@example.com"
+    },
+    "timestamp": "2025-07-08T08:02:19.260Z"
+  },
+  {
+    "id": 1751962201325,
+    "email": "test3@example.com",
+    "type": "newsletter",
+    "data": {
+      "source": "website"
+    },
+    "timestamp": "2025-07-08T08:10:01.325Z"
+  },
+  {
+    "id": 1751962441553,
+    "email": "lead@example.com",
+    "type": "lead",
+    "data": {
+      "email": "lead@example.com",
+      "name": "Lead Test",
+      "leadMagnet": "ROI Guide",
+      "trigger": "homepage"
+    },
+    "timestamp": "2025-07-08T08:14:01.553Z"
+  }
+]

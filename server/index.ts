@@ -91,7 +91,7 @@ async function startServer() {
       process.exit(1);
     }, 30000); // 30 second timeout
     
-    server.listen(port, host, () => {
+    server.listen(port, host, async () => {
       clearTimeout(serverTimeout);
       console.log(`5. ✓ Server listening on ${host}:${port}`);
       console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
@@ -99,7 +99,15 @@ async function startServer() {
       console.log(`✓ Available environment variables: PORT=${process.env.PORT}, HOST=${process.env.HOST}`);
       log(`serving on port ${port}`);
       
-      // In production, set up static files first (synchronous)
+      // Register routes FIRST (before any middleware that catches all routes)
+      try {
+        await registerRoutes(app);
+        console.log("6. Routes registered successfully ✓");
+      } catch (error) {
+        console.error("Warning: Some routes failed to register:", error);
+      }
+      
+      // In production, set up static files
       if (process.env.NODE_ENV !== "development") {
         console.log("7. Setting up static file serving...");
         try {
@@ -110,23 +118,18 @@ async function startServer() {
         }
       }
       
-      // Register routes AFTER server is listening (async)
-      registerRoutes(app).then(() => {
-        console.log("6. Routes registered successfully ✓");
-        console.log("✓ Server fully initialized and ready for requests");
-      }).catch((error) => {
-        console.error("Warning: Some routes failed to register:", error);
-      });
-      
-      // Setup Vite LAST in development only
+      // Setup Vite LAST in development only (after routes are registered)
       if (process.env.NODE_ENV === "development") {
         console.log("9. Setting up Vite in development mode...");
-        setupVite(app, server).then(() => {
+        try {
+          await setupVite(app, server);
           console.log("10. Vite setup completed ✓");
-        }).catch((error) => {
+        } catch (error) {
           console.error("Warning: Vite setup failed:", error);
-        });
+        }
       }
+      
+      console.log("✓ Server fully initialized and ready for requests");
     });
   } catch (error) {
     console.error("FATAL: Failed to start server:", error);

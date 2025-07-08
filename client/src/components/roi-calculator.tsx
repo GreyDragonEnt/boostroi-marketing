@@ -25,12 +25,13 @@ export default function ROICalculator({ onOpenCalendly }: ROICalculatorProps) {
 
   const calculateMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest("POST", "/api/calc", {
+      console.log("Sending ROI calculation request:", data);
+      const response = await apiRequest("POST", "/api/calc-debug", {
         monthlySpend: data.monthlySpend,
         monthlyRevenue: data.monthlyRevenue,
         industry: data.industry,
         channels: data.channels,
-        email: data.email
+        email: data.email || undefined
       });
       return response.json();
     },
@@ -58,10 +59,33 @@ export default function ROICalculator({ onOpenCalendly }: ROICalculatorProps) {
   });
 
   const handleCalculate = () => {
+    // Validate required fields
     if (!formData.monthlySpend || !formData.monthlyRevenue || !formData.industry || !formData.channels) {
       toast({
         title: "Missing Information",
         description: "Please fill in all fields to calculate your ROI.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate numeric fields
+    const monthlySpend = parseFloat(formData.monthlySpend);
+    const monthlyRevenue = parseFloat(formData.monthlyRevenue);
+    
+    if (isNaN(monthlySpend) || monthlySpend <= 0) {
+      toast({
+        title: "Invalid Monthly Spend",
+        description: "Please enter a valid monthly marketing spend amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isNaN(monthlyRevenue) || monthlyRevenue <= 0) {
+      toast({
+        title: "Invalid Monthly Revenue",
+        description: "Please enter a valid monthly revenue amount.",
         variant: "destructive",
       });
       return;

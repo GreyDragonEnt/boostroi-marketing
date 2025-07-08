@@ -1,53 +1,59 @@
 #!/usr/bin/env node
 
-// Specialized deployment script for Replit environments
-// Handles the unique networking requirements of Replit deployments
+// Simplified deployment script for production environments
+import express from 'express';
+import { createServer } from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const express = require('express');
-const { createServer } = require('http');
-const path = require('path');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-console.log('Starting Replit deployment server...');
+console.log('Starting production server...');
 
-// Create Express app
 const app = express();
 
-// Health check endpoint (required for Replit deployments)
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  next();
+});
+
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Serve static files from dist/public
+// Serve static files
 app.use(express.static(path.join(__dirname, 'dist/public')));
 
-// Serve the frontend for all routes (SPA routing)
+// SPA routing fallback
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/public/index.html'));
 });
 
-// Create server
 const server = createServer(app);
+const port = process.env.PORT || 5000;
+const host = process.env.HOST || '0.0.0.0';
 
-// Use Replit's environment variables
-const port = process.env.PORT || process.env.REPL_PORT || 5000;
-const host = process.env.HOST || process.env.REPL_HOST || '0.0.0.0';
-
-// Start server with enhanced error handling
 server.listen(port, host, () => {
-  console.log(`✅ Replit deployment server running on ${host}:${port}`);
-  console.log(`✅ Environment: ${process.env.NODE_ENV || 'production'}`);
-  console.log(`✅ Serving static files from: ${path.join(__dirname, 'dist/public')}`);
+  console.log(`✅ Server running on ${host}:${port}`);
 });
 
 server.on('error', (error) => {
   console.error('❌ Server error:', error);
-  if (error.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${port} is already in use`);
-  }
   process.exit(1);
 });
 
 // Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+  });
+});
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down gracefully');
   server.close(() => {

@@ -1,0 +1,10 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text { font-family: Arial, sans-serif; font-weight: bold; }
+  </style>
+  <!-- Harvey Norman Red Background -->
+  <rect width="200" height="60" fill="#E21E26" rx="8"/>
+  <!-- Harvey Norman Text -->
+  <text x="100" y="28" text-anchor="middle" fill="white" class="logo-text" font-size="14">HARVEY</text>
+  <text x="100" y="44" text-anchor="middle" fill="white" class="logo-text" font-size="14">NORMAN</text>
+</svg>

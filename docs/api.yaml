@@ -1,0 +1,252 @@
+openapi: 3.0.0
+info:
+  title: BoostROI Agency API
+  description: API for BoostROI marketing platform
+  version: 1.0.0
+  contact:
+    name: BoostROI Support
+    email: hello@boostroi.agency
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development server
+  - url: https://boostroi-marketing.replit.app/api
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /calc:
+    post:
+      summary: Calculate ROI projections
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - monthlySpend
+                - monthlyRevenue
+                - industry
+                - channels
+              properties:
+                monthlySpend:
+                  type: string
+                  description: Monthly marketing spend
+                monthlyRevenue:
+                  type: string
+                  description: Current monthly revenue
+                industry:
+                  type: string
+                  enum: [E-commerce, SaaS, Professional Services, Healthcare, Real Estate, Other]
+                channels:
+                  type: string
+                  description: Current marketing channels
+                email:
+                  type: string
+                  format: email
+                  description: Optional email for follow-up
+      responses:
+        '200':
+          description: ROI calculation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ROICalculation'
+        '400':
+          description: Invalid input data
+
+  /roi-audit:
+    post:
+      summary: Submit ROI audit request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ROIAuditRequest'
+      responses:
+        '200':
+          description: Audit request submitted successfully
+        '400':
+          description: Invalid input data
+
+  /lead-capture:
+    post:
+      summary: Capture lead information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadCapture'
+      responses:
+        '200':
+          description: Lead captured successfully
+        '400':
+          description: Invalid input data
+
+  /admin/requests:
+    get:
+      summary: Get all admin requests (protected)
+      security:
+        - adminAuth: []
+      responses:
+        '200':
+          description: List of all requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roiAudits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ROIAudit'
+                  leads:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lead'
+
+components:
+  schemas:
+    ROICalculation:
+      type: object
+      properties:
+        id:
+          type: integer
+        monthlySpend:
+          type: string
+        monthlyRevenue:
+          type: string
+        industry:
+          type: string
+        channels:
+          type: string
+        projectedRevenue:
+          type: string
+        additionalProfit:
+          type: string
+        roiImprovement:
+          type: string
+        email:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    ROIAuditRequest:
+      type: object
+      required:
+        - businessName
+        - contactName
+        - email
+        - phone
+        - industry
+        - businessType
+        - businessAge
+        - teamSize
+        - currentMonthlySpend
+        - currentChannels
+        - currentROI
+        - biggestChallenge
+        - revenueGoal
+        - primaryGoal
+        - timeline
+        - budget
+        - marketingConsent
+        - auditConsent
+      properties:
+        businessName:
+          type: string
+        contactName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        website:
+          type: string
+          nullable: true
+        industry:
+          type: string
+        businessType:
+          type: string
+        businessAge:
+          type: string
+        teamSize:
+          type: string
+        currentMonthlySpend:
+          type: string
+        currentChannels:
+          type: array
+          items:
+            type: string
+        currentROI:
+          type: string
+        biggestChallenge:
+          type: string
+        revenueGoal:
+          type: string
+        primaryGoal:
+          type: string
+        timeline:
+          type: string
+        previousAgencies:
+          type: boolean
+          nullable: true
+        budget:
+          type: string
+        additionalInfo:
+          type: string
+          nullable: true
+        marketingConsent:
+          type: boolean
+        auditConsent:
+          type: boolean
+
+    LeadCapture:
+      type: object
+      required:
+        - email
+        - name
+        - leadMagnet
+        - trigger
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        leadMagnet:
+          type: string
+        trigger:
+          type: string
+        status:
+          type: string
+          default: new
+
+  securitySchemes:
+    adminAuth:
+      type: http
+      scheme: bearer
+      description: Admin authentication token

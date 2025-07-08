@@ -82,14 +82,14 @@ export default function LiveChatWidget() {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-40 right-6 z-50">
         <Button
           onClick={() => setIsOpen(true)}
-          className="bg-brand text-white rounded-full w-16 h-16 p-0 shadow-lg hover:bg-brand/90 hover:scale-110 transition-all animate-pulse"
+          className="bg-brand text-white rounded-full w-11 h-11 p-0 shadow-lg hover:bg-brand/90 hover:scale-110 transition-all animate-pulse"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-4 w-4" />
         </Button>
-        <div className="absolute -top-2 -left-2 bg-green-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-bounce">
+        <div className="absolute -top-1 -left-1 bg-green-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center animate-bounce">
           !
         </div>
       </div>
@@ -97,19 +97,19 @@ export default function LiveChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-40 right-6 z-50">
       <div className={`bg-white rounded-lg shadow-2xl border transition-all duration-300 ${
-        isMinimized ? 'w-80 h-16' : 'w-80 h-96'
+        isMinimized ? 'w-56 h-11' : 'w-56 h-[269px]'
       }`}>
         
         {/* Header */}
-        <div className="bg-brand text-white p-4 rounded-t-lg flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <MessageCircle className="h-4 w-4" />
+        <div className="bg-brand text-white p-3 rounded-t-lg flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+              <MessageCircle className="h-3 w-3" />
             </div>
             <div>
-              <div className="font-semibold text-sm">BoostROI Support</div>
+              <div className="font-semibold text-xs">BoostROI Support</div>
               <div className="text-xs opacity-90">Typically replies in 2 minutes</div>
             </div>
           </div>
@@ -132,15 +132,15 @@ export default function LiveChatWidget() {
         {!isMinimized && (
           <>
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4 h-64">
-              <div className="space-y-4">
+            <ScrollArea className="flex-1 p-3 h-44">
+              <div className="space-y-3">
                 {messages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                      className={`max-w-[80%] p-2 rounded-lg text-xs ${
                         message.sender === 'user'
                           ? 'bg-brand text-white'
                           : 'bg-gray-100 text-gray-800'
@@ -171,17 +171,17 @@ export default function LiveChatWidget() {
             </ScrollArea>
 
             {/* Input */}
-            <div className="p-4 border-t flex space-x-2">
+            <div className="p-3 border-t flex space-x-2">
               <Input
                 value={currentMessage}
                 onChange={(e) => setCurrentMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Ask about pricing, results, or services..."
-                className="flex-1"
+                placeholder="Ask about pricing, results..."
+                className="flex-1 text-xs"
               />
               <Button
                 onClick={handleSendMessage}
-                className="bg-brand hover:bg-brand/90 p-2"
+                className="bg-brand hover:bg-brand/90 p-1.5"
               >
                 <Send className="h-4 w-4" />
               </Button>

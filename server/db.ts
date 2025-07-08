@@ -39,7 +39,10 @@ export const pool = new Proxy({} as Pool, {
 
 export const db = new Proxy({} as ReturnType<typeof drizzle>, {
   get(target, prop) {
-    const { db } = getDatabase();
-    return db[prop as keyof typeof db];
+    const { db: database } = getDatabase();
+    if (!database) {
+      throw new Error("Database not initialized");
+    }
+    return database[prop as keyof typeof database];
   }
 });

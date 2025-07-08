@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .status {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 BoostROI Server Test</h1>
+        <div class="status">
+            <p><strong>✅ Server is working!</strong></p>
+            <p>Port: 9000</p>
+            <p>Time: <span id="time"></span></p>
+        </div>
+        <p>If you can see this page, the server is running correctly.</p>
+        <p>The issue might be with the React application or browser compatibility.</p>
+        
+        <button onclick="testConsole()" style="background: #007cba; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px;">
+            Test Console (Check F12)
+        </button>
+        
+        <button onclick="location.reload()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px;">
+            Reload Page
+        </button>
+    </div>
+
+    <script>
+        // Update time
+        function updateTime() {
+            document.getElementById('time').textContent = new Date().toLocaleTimeString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Test console function
+        function testConsole() {
+            console.log('✅ Console is working! F12 should show this message.');
+            console.log('Server URL: http://localhost:9000');
+            console.log('React App URL: http://localhost:9000');
+            alert('Check the browser console (F12) for test messages!');
+        }
+
+        // Log page load
+        console.log('✅ Simple test page loaded successfully');
+        console.log('Current URL:', window.location.href);
+        console.log('User Agent:', navigator.userAgent);
+    </script>
+</body>
+</html>

@@ -2,32 +2,32 @@ export default function ClientLogos() {
   const clients = [
     {
       name: "Woolworths Group",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Woolworths_logo.svg/200px-Woolworths_logo.svg.png",
+      logo: "/logos/woolworths-logo.svg",
       industry: "Retail"
     },
     {
       name: "NAB",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/National_Australia_Bank_logo.svg/200px-National_Australia_Bank_logo.svg.png",
+      logo: "/logos/nab-logo.svg",
       industry: "Banking"
     },
     {
       name: "Qantas",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Qantas_Airways_logo_2016.svg/200px-Qantas_Airways_logo_2016.svg.png",
+      logo: "/logos/qantas-logo.svg",
       industry: "Aviation"
     },
     {
       name: "Bunnings",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Bunnings_Warehouse_logo.svg/200px-Bunnings_Warehouse_logo.svg.png",
+      logo: "/logos/bunnings-logo.svg",
       industry: "Hardware Retail"
     },
     {
       name: "JB Hi-Fi",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/JB_Hi-Fi_logo.svg/200px-JB_Hi-Fi_logo.svg.png",
+      logo: "/logos/jb-hifi-logo.svg",
       industry: "Electronics"
     },
     {
       name: "Harvey Norman",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Harvey_Norman_logo.svg/200px-Harvey_Norman_logo.svg.png",
+      logo: "/logos/harvey-norman-logo.svg",
       industry: "Retail"
     }
   ];
@@ -52,6 +52,13 @@ export default function ClientLogos() {
                 alt={`${client.name} logo`}
                 className="max-h-12 w-auto object-contain"
                 loading="lazy"
+                onError={(e) => {
+                  console.log(`Failed to load logo for ${client.name}`);
+                  e.currentTarget.style.display = 'none';
+                }}
+                onLoad={() => {
+                  console.log(`Successfully loaded logo for ${client.name}`);
+                }}
               />
             </div>
           ))}

@@ -9,6 +9,7 @@ import Privacy from "@/pages/privacy";
 import Refund from "@/pages/refund";
 import Checkout from "@/pages/checkout";
 import Admin from "@/pages/admin";
+import AdminEnhanced from "@/pages/admin-enhanced";
 import EmailTest from "@/pages/email-test";
 import NotFound from "@/pages/not-found";
 
@@ -21,6 +22,7 @@ function Router(): JSX.Element {
       <Route path="/refund" component={Refund} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/admin" component={Admin} />
+      <Route path="/admin-enhanced" component={AdminEnhanced} />
       <Route path="/email-test" component={EmailTest} />
       <Route component={NotFound} />
     </Switch>

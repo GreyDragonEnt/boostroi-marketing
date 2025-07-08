@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import boostROILogo from "@assets/BoostROI-new-logo_1751787025249.png";
 
 interface HeaderProps {
   onOpenCalendly: () => void;
@@ -18,10 +17,16 @@ export default function Header({ onOpenCalendly }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <img 
-              src={boostROILogo} 
+              src="/boostroi-logo.svg" 
               alt="BoostROI Agency" 
               className="h-12 w-auto"
+              onError={(e) => {
+                console.error('Logo failed to load:', e);
+                e.currentTarget.style.display = 'none';
+              }}
+              onLoad={() => console.log('Logo loaded successfully')}
             />
+            <span className="ml-2 text-2xl font-bold text-brand">BoostROI</span>
           </Link>
           
           {/* Desktop Navigation */}

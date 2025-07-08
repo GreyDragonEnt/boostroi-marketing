@@ -1,0 +1,9 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text { font-family: Arial, sans-serif; font-weight: bold; }
+  </style>
+  <!-- Woolworths Green Background -->
+  <rect width="200" height="60" fill="#1B5E20" rx="8"/>
+  <!-- Woolworths Text -->
+  <text x="100" y="38" text-anchor="middle" fill="white" class="logo-text" font-size="18">WOOLWORTHS</text>
+</svg>
